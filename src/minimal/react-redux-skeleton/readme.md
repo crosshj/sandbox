@@ -20,5 +20,5 @@
 ## Todo
 
 - [x] connect redux and react
-- [x] ~~~will probably need JSX transform~~ no JSX
+- [x] ~~will probably need JSX transform~~ no JSX
 - [ ] hot-reload / watch
