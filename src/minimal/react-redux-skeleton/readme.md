@@ -16,6 +16,7 @@
 [Minimal React Redux (similar concept)](https://github.com/mattzeunert/Minimal-React-Redux-Example)
 
 ## Todo
-[ ] connect redux and react
-[ ] will probably need JSX transform
-[ ] hot-reload / watch
+
+- [ ] connect redux and react
+- [ ] will probably need JSX transform
+- [ ] hot-reload / watch
