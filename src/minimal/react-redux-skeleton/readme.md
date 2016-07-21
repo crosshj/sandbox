@@ -11,7 +11,11 @@
 
 [React JSFiddle with Babel/JSX](https://jsfiddle.net/reactjs/69z2wepo/)
 
+[React-Redux How It Works Video](https://www.youtube.com/watch?v=VJ38wSFbM3A)
+
+[Minimal React Redux (similar concept)](https://github.com/mattzeunert/Minimal-React-Redux-Example)
+
 ## Todo
-[ ] redux and react are not yet connected
+[ ] connect redux and react
 [ ] will probably need JSX transform
 [ ] hot-reload / watch
