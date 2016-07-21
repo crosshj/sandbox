@@ -17,8 +17,11 @@
 
 [Problems with React/Redux](http://staltz.com/some-problems-with-react-redux.html)
 
+## Goals
+- environment that allows for development of components outside some large/involved React/Redux/Node setup
+
 ## Todo
 
 - [x] connect redux and react
-- [x] ~~will probably need JSX transform~~ no JSX
+- [x] ~~will probably need JSX transform~~ no JSX (violates one of the goals of this experiment)
 - [ ] hot-reload / watch
