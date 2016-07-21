@@ -6,6 +6,6 @@ experiments with react and flux/redux/whatever-dux
 This is a place for me to play with different ideas around React, Flux, Redux, and whatever else floats my boat at the time.   
 
 
-### Experiments
+### the experiments
 [React and Redux in one page with no JSX](https://github.com/crosshj/react-sandbox/tree/master/src/minimal/react-redux-skeleton)
 
