@@ -1,4 +1,4 @@
-# Minimal React and Redux with Skeleton
+# Minimal React and Redux with [Skeleton](http://getskeleton.com/)
 
 > The intent is to create a fairly minimal setup that allows for React component
 > development and testing with as little overhead as possible
