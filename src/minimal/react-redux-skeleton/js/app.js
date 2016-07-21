@@ -71,7 +71,8 @@
 
     var store = Redux.createStore(reducerFunction);
 
-    var Svg = ({greeting}) => {
+    var Svg = (props) => {
+      const {greeting='hello'} = props || {};
       console.log(greeting);
       var props = {
         className: 'image',
@@ -96,7 +97,7 @@
       };
       var _children = [
         props.greeting,
-        Svg(props)
+        Svg()
       ];
       return React.DOM.div(_props, _children);
     };
