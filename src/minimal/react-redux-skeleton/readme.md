@@ -19,6 +19,6 @@
 
 ## Todo
 
-- [ ] connect redux and react
+- [x] connect redux and react
 - [ ] will probably need JSX transform
 - [ ] hot-reload / watch
