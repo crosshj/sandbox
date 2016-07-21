@@ -12,6 +12,6 @@
 [React JSFiddle with Babel/JSX](https://jsfiddle.net/reactjs/69z2wepo/)
 
 ## Todo
-[] redux and react are not yet connected
-[] will probably need JSX transform
-[] hot-reload / watch
+[ ] redux and react are not yet connected
+[ ] will probably need JSX transform
+[ ] hot-reload / watch
