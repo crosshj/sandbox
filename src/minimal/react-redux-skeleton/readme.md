@@ -15,6 +15,8 @@
 
 [Minimal React Redux (similar concept)](https://github.com/mattzeunert/Minimal-React-Redux-Example)
 
+[Problems with React/Redux](http://staltz.com/some-problems-with-react-redux.html)
+
 ## Todo
 
 - [ ] connect redux and react
