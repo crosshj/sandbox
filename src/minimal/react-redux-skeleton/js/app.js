@@ -4,8 +4,6 @@
   //––––––––––––––––––––––––––––––––––––––––––––––––––
 
   function reduxSetup(){
-    let store;
-
     // Reducer
     function counter (state = 0, action) {
       switch (action.type) {
@@ -88,7 +86,7 @@
       return React.DOM.svg(props, children);
     };
 
-    const App = ({greeting='no greeting provided'}={}) => {
+    let App = ({greeting='no greeting provided'}={}) => {
       const props = {
         className: 'app'
       };
