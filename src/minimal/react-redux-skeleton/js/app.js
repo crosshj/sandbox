@@ -4,14 +4,10 @@
   //––––––––––––––––––––––––––––––––––––––––––––––––––
 
   function reduxSetup(){
-    var store;
+    let store;
 
     // Reducer
-    function counter (state, action) {
-      if (typeof state == 'undefined') {
-        state = 0;
-      }
-
+    function counter (state = 0, action) {
       switch (action.type) {
         case 'INCREMENT':
           state++;
@@ -27,8 +23,8 @@
       document.querySelector('#counter').innerHTML = store.getState();
     }
 
-    var store = Redux.createStore(counter);
-      store.subscribe(render);
+    const store = Redux.createStore(counter);
+    store.subscribe(render);
     render();
 
     setInterval(function() {
@@ -47,39 +43,40 @@
 
   function reactSetup() {
     //TODO: would be nice to have JSX and watch+babel here
-    var Hello = function(props) {
-        return React.createElement("div", null, "Hello ", props.name);
+    const HelloComponent = function({name='No Name Provided'}) {
+        return React.createElement("div", null, "Hello ", name);
     };
 
     ReactDOM.render(
-      React.createElement(Hello, {name: "World"}),
+      React.createElement(HelloComponent, {name: "World"}),
       document.getElementById('container')
     );
   }
 
   function reactReduxSetup() {
-    var defaultState = {
+    const defaultState = {
         greeting: "Hello World!"
     };
 
     function reducerFunction() {
-        var state = arguments.length <= 0 || arguments[0] === undefined ? defaultState : arguments[0];
-        var action = arguments[1];
+        const state = arguments.length <= 0 || arguments[0] === undefined
+          ? defaultState
+          : arguments[0];
+        const action = arguments[1];
 
         return state;
     }
 
-    var store = Redux.createStore(reducerFunction);
+    const store = Redux.createStore(reducerFunction);
 
-    var Svg = (props) => {
-      const {greeting='hello'} = props || {};
+    const Svg = ({greeting='no greeting provided'}={}) => {
       console.log(greeting);
-      var props = {
+      const props = {
         className: 'image',
         width: 20,
         height: 10
       };
-      var children = [
+      const children = [
         React.DOM.circle({
           cx: 15,
           cy: 5,
@@ -91,15 +88,12 @@
       return React.DOM.svg(props, children);
     };
 
-    var App = (props) => {
-      var _props = {
+    const App = ({greeting='no greeting provided'}={}) => {
+      const props = {
         className: 'app'
       };
-      var _children = [
-        props.greeting,
-        Svg()
-      ];
-      return React.DOM.div(_props, _children);
+      var children = [greeting, Svg()];
+      return React.DOM.div(props, children);
     };
 
     App = ReactRedux.connect(function (state) {
