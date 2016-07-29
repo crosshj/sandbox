@@ -78,8 +78,7 @@
         React.DOM.circle({
           cx: 15,
           cy: 5,
-          r: 5,
-          fill: 'cadetblue'
+          r: 5
         })
       ];
 
