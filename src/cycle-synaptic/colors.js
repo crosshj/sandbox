@@ -1,44 +1,103 @@
 // SYNAPTIC --------------------------------------------------------------------
+const {Architect, Trainer} = synaptic;
 
-var history = [];
+var results = [];
+const network = new Architect.Perceptron(3,5,1);
+const trainer = new Trainer(network);
+const clone = item => {
+  return JSON.parse(JSON.stringify(item));
+};
+function triggerEvent(el, type){
+  if ('createEvent' in document) {
+    // modern browsers, IE9+
+    var e = document.createEvent('HTMLEvents');
+    e.initEvent(type, false, true);
+    el.dispatchEvent(e);
+  }
+}
+
 const train = ({color}={}, output) => {
-  if (!color || !output ) return;
+  if (!color || !(output===0 || output===1)) return;
+  results.push({
+    input: [
+      color.r/255,
+      color.g/255,
+      color.b/255
+    ],
+    output: [output]
+  });
 
-  debugger;
-  //TODO: add input/output to history and train
+  const trainingSet = clone(results);
+  const trainingOptions = {
+    rate: .1,
+    error: .001,
+    shuffle: true,
+    log: 1
+  };
+  trainer.trainAsync(trainingSet, trainingOptions)
+    .then(results => {
+      console.log('!done', results)
+      triggerEvent(document.body, 'training-done');
+    });
+
   return;
 }
 
-const predict = input => {
-  // TODO: activate net for input
-  const output = 0;
+const predict = color => {
+  const normalized = [
+    color.r/255,
+    color.g/255,
+    color.b/255
+  ];
+  const output = (() => {
+    const out = Math.round(network.activate(normalized)[0]);
+    console.log({out})
+    return isNaN(out)
+      ? undefined
+      : out ? 'white' : 'black';
+  })();
   return output;
 }
 
 // CYCLE -----------------------------------------------------------------------
 function render(state){
-  const {button, div, label, input, h1, p} = CycleDOM;
+  const {button, div, label, input, h1, p, span} = CycleDOM;
 
   return div([
-    div('#desc','synaptic.js demo - train a neural network to recognize color contrast'),
+    div('#desc',[
+      span('.bold', 'synaptic.js demo'),
+      span(' - train a neural network to recognize color contrast')
+    ]),
     div('#container', [
       div('#training-box.section', [
-        div('.section-header', 'Which one can you read more easily?'),
+        div('.section-header', 'Which is easier to read?'),
         div('#swatches', [
-          div(`.swatch-box${!state.guess?'.guess':''}`, [
+          div(`.swatch-box${state.guess==='black'?'.guess':''}`, [
             div('#black-swatch.swatch',
               {style: colorToStyle(state.color)},
-              [div('.swatch-text', 'This one')]
+              [(!state.loading
+                ? p([
+                  span('.swatch-text', 'This'),
+                  span('.sub-text', 'is better')
+                ])
+                : div('.spinner')
+              )]
             )
           ]),
-          div(`.swatch-box${state.guess?'.guess':''}`, [
+          div(`.swatch-box${state.guess==='white'?'.guess':''}`, [
             div('#white-swatch.swatch',
               {style: colorToStyle(state.color)},
-              [div('.swatch-text', 'This one')]
+              [(!state.loading
+                ? p([
+                  span('.swatch-text', 'This'),
+                  span('.sub-text', 'is better')
+                ])
+                : div('.spinner')
+              )]
             )
           ])
         ]),
-        p('Counter: ' + state.guess)
+        p((state.loading ? 'Training...' : 'Use Left/Right Arrows or click one'))
       ])
     ])
   ]);
@@ -59,17 +118,36 @@ const randomColor = () => {
 
 function main(sources) {
   const xs = xstream.default;
-
   const action$ = xs.merge(
     sources.DOM.select('#black-swatch').events('click').mapTo(0),
-    sources.DOM.select('#white-swatch').events('click').mapTo(1)
+    sources.DOM.select('#white-swatch').events('click').mapTo(1),
+    sources.Body.events('keyup').map(event => {
+      if (event.keyCode===37) return 0;
+      if (event.keyCode===39) return 1;
+      return -1;
+    }),
+    sources.Body.events('training-done').map(event => 'training-done')
   );
 
+  var state = undefined;
   const accumulator = (acc, next) => {
-    train(acc, next);
-    const color = randomColor();
-    const guess = predict(color);
-    return { color, guess };
+    if (next === -1) return state;
+    if (next === undefined || next === 'training-done'){
+      const color = randomColor();
+      const guess = predict(color);
+      const loading = false;
+      state = { color, guess, loading }
+    }
+    if (next === 0 || next === 1) {
+      if (state.loading) return state;
+      train(acc, next);
+      state = {
+        color: state.color,
+        guess: state.guess,
+        loading: true
+      }
+    }
+    return state;
   };
   const initial = accumulator();
 
@@ -85,10 +163,12 @@ function main(sources) {
 
 function createDOM(){
   const {run} = Cycle;
+  const xs = xstream.default;
   const {makeDOMDriver} = CycleDOM;
 
   const drivers = {
-    DOM: makeDOMDriver('#app')
+    DOM: makeDOMDriver('#app'),
+    Body: makeDOMDriver(document.body)
   };
 
   run(main, drivers);
