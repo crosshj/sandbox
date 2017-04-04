@@ -8,5 +8,5 @@ This is a place for me to play with different ideas around React, Flux, Redux, a
 ### the experiments
 [Cycle.JS and Synaptic.JS](https://crosshj.github.io/react-sandbox/src/cycle-synaptic/colors)
 
-[React and Redux in one page with no JSX](https://github.com/crosshj/react-sandbox/tree/master/src/minimal/react-redux-skeleton)
+[React and Redux in one page with no JSX](https://crosshj.github.io/react-sandbox/src/minimal/react-redux-skeleton/redux-react-index)
 
