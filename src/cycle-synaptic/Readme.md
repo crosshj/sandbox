@@ -4,8 +4,8 @@ This started life as a copy of Heather Arthur's Brain.JS demo.  The idea is to t
 
 ## Dependencies
 
-[cyclejs](https://github.com/cyclejs/cyclejs/tree/master/examples) - frontend view libray
-[synaptic](https://github.com/cazala/synaptic/wiki)
+[cyclejs](https://github.com/cyclejs/cyclejs/tree/master/examples) - view libray   
+[synaptic](https://github.com/cazala/synaptic/wiki) - neural network library
 
 ## Todo
 
