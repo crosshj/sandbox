@@ -11,5 +11,6 @@ This started life as a copy of Heather Arthur's Brain.JS demo.  The idea is to t
   - https://github.com/cytoscape/cytoscape.js :star:
   - https://github.com/fkling/JSNetworkX
   - https://www.sitepoint.com/twelve-javascript-libraries-data-visualization/
+  - https://www.quora.com/What-is-the-best-HTML5-visualization-library-that-can-draw-graphs-nodes-and-edges
   - ...
 - change network settings
