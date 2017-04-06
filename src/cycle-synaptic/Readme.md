@@ -5,4 +5,11 @@ This started life as a copy of Heather Arthur's Brain.JS demo.  The idea is to t
 ## Todo
 
 - visualize network
+  - https://github.com/almende/vis
+  - http://sigmajs.org/
+  - https://github.com/GraphAlchemist/Alchemy
+  - https://github.com/cytoscape/cytoscape.js :star:
+  - https://github.com/fkling/JSNetworkX
+  - https://www.sitepoint.com/twelve-javascript-libraries-data-visualization/
+  - ...
 - change network settings
