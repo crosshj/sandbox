@@ -161,7 +161,7 @@ function main(sources) {
   return driverSinks;
 }
 
-function createDOM(){
+function setupCycle(){
   const {run} = Cycle;
   const xs = xstream.default;
   const {makeDOMDriver} = CycleDOM;
@@ -172,6 +172,65 @@ function createDOM(){
   };
 
   run(main, drivers);
+}
+
+// 
+
+function setupCytoscape(){
+  var cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: []
+  });
+  
+  // output layer
+  cy.add({
+      data: { id: 'ouput' }
+      }
+  );
+  
+  // hidden layer
+  for (var i = 0; i < 5; i++) {
+    var source = 'hidden' + (i+1);
+    cy.add({
+        data: { id: source }
+        }
+    );  
+    cy.add({
+        data: {
+            id: 'hidden-edge' + (i+1),
+            source: source,
+            target: 'ouput'
+        }
+    });
+  }
+  
+  // input layer
+  for (var j = 0; j < 3; j++) {
+    var source = 'input' + (j+1);
+    cy.add({
+        data: { id: source }
+        }
+    );
+    
+    for (var k = 0; k < 5; k++) {
+      cy.add({
+          data: {
+              id: 'input-edge' + (j+1) + '-' + (k+1),
+              source: source,
+              target: 'hidden' + (k+1)
+          }
+      });
+    }
+  }
+  
+  cy.layout({
+    name: 'breadthfirst'
+  });
+}
+
+function createDOM(){
+  setupCycle();
+  setupCytoscape();
 }
 
 document.addEventListener('DOMContentLoaded', createDOM, false);
