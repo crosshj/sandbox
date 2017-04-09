@@ -32,11 +32,11 @@ const train = ({color}={}, output) => {
     rate: .1,
     error: .001,
     shuffle: true,
-    log: 1
+    log: 0//1
   };
   trainer.trainAsync(trainingSet, trainingOptions)
     .then(results => {
-      console.log('!done', results)
+      //console.log('!done', results)
       triggerEvent(document.body, 'training-done');
     });
 
@@ -51,13 +51,24 @@ const predict = color => {
   ];
   const output = (() => {
     const out = Math.round(network.activate(normalized)[0]);
-    console.log({out})
+    //console.log({out})
     return isNaN(out)
       ? undefined
       : out ? 'white' : 'black';
   })();
-  console.log(network.neurons());
-  return output;
+  //console.log(network.neurons().map(x => x.neuron));
+  console.log(network.toJSON().neurons
+    .map(x => x.activation)
+    .filter((x,i) => i>2 && i<8)
+    .reduce((x,all) => x+all, 0) / 5
+  );
+  const outputNeuron = network.toJSON().neurons[8];
+  const {state, activation, bias} = outputNeuron;
+  console.log("output neuron: ", JSON.stringify({state, activation, bias}));
+  return {
+    output,
+    neurons: network.toJSON().neurons.map(x => x.activation)
+  };
 }
 
 // CYCLE -----------------------------------------------------------------------
@@ -135,12 +146,19 @@ function main(sources) {
     if (next === -1) return state;
     if (next === undefined || next === 'training-done'){
       const color = randomColor();
-      const guess = predict(color);
+      const prediction = predict(color);
+      const guess = prediction.output;
       const loading = false;
       window.cy.$('#R').css({content: `R = ${color.r} (${(color.r/255).toFixed(4)})`});
       window.cy.$('#G').css({content: `G = ${color.g} (${(color.g/255).toFixed(4)})`});
       window.cy.$('#B').css({content: `B = ${color.b} (${(color.b/255).toFixed(4)})`});
-      window.cy.$('#output').css({content: guess});
+      [1,2,3,4,5].forEach(number => {
+        window.cy.$('#hidden' + number).css({
+          content: `${prediction.neurons[number+2].toFixed(4)}`,
+          'background-color': prediction.neurons[number+2] >= 0.5 ? '#ccc' : '#fff'
+        });
+      });
+      window.cy.$('#output').css({content: `${guess}${'\n'}${prediction.neurons[8].toFixed(4)}`});
       state = { color, guess, loading }
     }
     if (next === 0 || next === 1) {
