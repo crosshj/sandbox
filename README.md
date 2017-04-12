@@ -6,6 +6,6 @@ This is a place for me to play with different ideas around React, Flux, Redux, a
 
 
 ### the experiments
-Cycle.JS and Synaptic.JS - [[demo]](https://crosshj.com/sandbox/src/cycle-synaptic/colors)  [[source]](https://github.com/crosshj/sandbox/tree/master/src/cycle-synaptic)
+cycle+xstream(UI), synaptic(Neural Net), and cytoscape(visualize graph) - [[demo]](https://crosshj.com/sandbox/src/cycle-synaptic/colors)  [[source]](https://github.com/crosshj/sandbox/tree/master/src/cycle-synaptic)
 
-React and Redux in one page with no JSX - [[demo]](https://crosshj.com/sandbox/src/minimal/react-redux-skeleton/redux-react-index)  [[source]](https://github.com/crosshj/sandbox/tree/master/src/minimal/react-redux-skeleton)
+React and Redux in one page with no JSX, no Babel, no Webpack - [[demo]](https://crosshj.com/sandbox/src/minimal/react-redux-skeleton/redux-react-index)  [[source]](https://github.com/crosshj/sandbox/tree/master/src/minimal/react-redux-skeleton)
