@@ -67,6 +67,7 @@ const predict = color => {
   console.log("output neuron: ", JSON.stringify({state, activation, bias}));
   return {
     output,
+    network: network.toJSON(),
     neurons: network.toJSON().neurons.map(x => x.activation)
   };
 }
