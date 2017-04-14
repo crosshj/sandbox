@@ -153,6 +153,11 @@ function main(sources) {
       window.cy.$('#R').css({content: `R = ${color.r} (${(color.r/255).toFixed(4)})`});
       window.cy.$('#G').css({content: `G = ${color.g} (${(color.g/255).toFixed(4)})`});
       window.cy.$('#B').css({content: `B = ${color.b} (${(color.b/255).toFixed(4)})`});
+      window.cy.$('edge').forEach((edge, i) => edge.css({
+	      'target-label': prediction.network.connections[i].weight.toFixed(2),
+	      fontSize: 8,
+	      'target-text-offset': 20
+      }));
       [1,2,3,4,5].forEach(number => {
         window.cy.$('#hidden' + number).css({
           content: `${prediction.neurons[number+2].toFixed(4)}`,
