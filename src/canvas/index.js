@@ -13,7 +13,8 @@
   function ready(){
     var canvas = document.getElementById('myCanvas');
     var ctx = canvas.getContext('2d');
-    var setPixel = (color, pos) => setCanvasPixel(ctx, color, pos);
+    // boo, bad global
+    window.setPixel = (color, pos) => setCanvasPixel(ctx, color, pos);
     
     setPixel({r:255}, {x:10, y:10});
   }
