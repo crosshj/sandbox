@@ -5,5 +5,7 @@
 
 #canvas-container canvas{
   margin: auto;
-  border: 1px solid black;
+  border: 1px solid #aaa;
+  background-color: #fefefe;
+  margin-top: 5%;
 }
