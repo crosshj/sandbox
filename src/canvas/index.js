@@ -10,11 +10,16 @@
     context.putImageData( id, x, y );  
   }
   
+  function range(from, to){
+    return new Array(to).fill().map((a,b)=>b);
+  }
+  
   function ready(){
     var canvas = document.getElementById('myCanvas');
     var ctx = canvas.getContext('2d');
     // boo, bad global
     window.setPixel = (color, pos) => setCanvasPixel(ctx, color, pos);
+    window.range = range;
     
     setPixel({r:255}, {x:10, y:10});
   }
