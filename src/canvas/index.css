@@ -8,4 +8,5 @@
   border: 1px solid #aaa;
   background-color: #fefefe;
   margin-top: 5%;
+  image-rendering: pixelated;
 }
