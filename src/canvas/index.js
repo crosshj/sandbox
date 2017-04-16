@@ -15,13 +15,16 @@
   }
   
   var ad;
-  function setImageDataPixel(imageData, {r=0, g=0, b=0, a=255}, {x=0, y=0}){
+  function setImageDataPixel(imageData, {r=0, g=0, b=0, a=255}, {x=0, y=0, xmax=1}){
     ad = ad || imageData.data;
     
-    ad[x * y * 4 + 0]   = r;
-    ad[x * y * 4 + 1]   = g;
-    ad[x * y * 4 + 2]   = b;
-    ad[x * y * 4 + 3]   = a;
+    const rowOffset = y * 4 * xmax;
+    const colOffset = x * 4;
+    const offset = rowOffset + colOffset;
+    ad[offset + 0]   = r;
+    ad[offset + 1]   = g;
+    ad[offset + 2]   = b;
+    ad[offset + 3]   = a;
   }
   
   function range(from, to){
@@ -40,7 +43,7 @@
           r: randomInt(0,255),
           g: randomInt(0,255),
           b: randomInt(0,255)
-        }, {x, y});
+        }, {x, y, xmax: 640});
       });
     });
   }
