@@ -18,10 +18,10 @@
   function setImageDataPixel(imageData, {r=0, g=0, b=0, a=255}, {x=0, y=0}){
     ad = ad || imageData.data;
     
-    d[x * y + 0]   = r;
-    d[x * y + 1]   = g;
-    d[x * y + 2]   = b;
-    d[x * y + 3]   = a;
+    ad[x * y + 0]   = r;
+    ad[x * y + 1]   = g;
+    ad[x * y + 2]   = b;
+    ad[x * y + 3]   = a;
   }
   
   function range(from, to){
