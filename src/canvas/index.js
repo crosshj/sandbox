@@ -10,6 +10,20 @@
     context.putImageData( id, x, y );  
   }
   
+  function newImageData(context, {x=1,y=1}){
+    return ctx.createImageData(x, y);
+  }
+  
+  var ad;
+  function setImageDataPixel(imageData, {r=0, g=0, b=0, a=255}, {x=0, y=0}){
+    ad = ad || imageData.data;
+    
+    d[x * y + 0]   = r;
+    d[x * y + 1]   = g;
+    d[x * y + 2]   = b;
+    d[x * y + 3]   = a;
+  }
+  
   function range(from, to){
     return new Array(to).fill().map((a,b)=>b);
   }
@@ -37,7 +51,10 @@
     // boo, bad global
     window.setPixel = (color, pos) => setCanvasPixel(ctx, color, pos);
     window.range = range;
-    randomPixel(setPixel);
+    
+    var imageData = newImageData(ctx, {x:640, y:480});
+    randomPixel((color, pos) => setImageDataPixel(imageData, color, pos));
+    context.putImageData( imageData, 0, 0 );
   }
   document.addEventListener('DOMContentLoaded', ready, false);
 })();
