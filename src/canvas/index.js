@@ -11,7 +11,7 @@
   }
   
   function newImageData(context, {x=1,y=1}){
-    return ctx.createImageData(x, y);
+    return context.createImageData(x, y);
   }
   
   var ad;
