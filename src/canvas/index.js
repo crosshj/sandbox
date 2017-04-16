@@ -54,7 +54,7 @@
     
     var imageData = newImageData(ctx, {x:640, y:480});
     randomPixel((color, pos) => setImageDataPixel(imageData, color, pos));
-    context.putImageData( imageData, 0, 0 );
+    ctx.putImageData( imageData, 0, 0 );
   }
   document.addEventListener('DOMContentLoaded', ready, false);
 })();
