@@ -1,4 +1,38 @@
 (()=> {
+  // http://stackoverflow.com/a/20693860/1627873
+  var newWorker = function (funcObj) {
+    // Build a worker from an anonymous function body
+    var blobURL = URL.createObjectURL(new Blob(['(',
+        funcObj.toString(),
+      ')()'], {
+      type: 'application/javascript'
+    })),
+
+    worker = new Worker(blobURL);
+
+    // Won't be needing this anymore
+    URL.revokeObjectURL(blobURL);
+
+    return worker;
+  }
+  
+// TODO: use this to do the heavy lifting
+//   var w = newWorker(function () {
+//     var i = 0;
+
+//     function timedCount() {
+//         i = i + 1;
+//         postMessage(i);
+//         setTimeout(timedCount, 500);
+//     }
+
+//     timedCount();
+//   });
+
+//   w.onmessage = function (event) {
+//       document.getElementById("result").innerHTML = event.data;
+//   }
+  
   var id, d;
   function setCanvasPixel(context, {r=0, g=0, b=0, a=255}, {x=0, y=0}){
     id = id || context.createImageData(1,1); // only do this once per page
