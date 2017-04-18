@@ -16,6 +16,11 @@
     return worker;
   }
   
+  //http://www.hyperlounge.net/blog/up-the-workers-2/
+  //https://www.html5rocks.com/en/tutorials/workers/basics/
+  //https://developers.google.com/web/updates/2011/12/Transferable-Objects-Lightning-Fast
+  //http://www.hyperlounge.net/blog/up-the-workers-2/
+  
 // TODO: use this to do the heavy lifting
 //   var w = newWorker(function () {
 //     var i = 0;
@@ -89,6 +94,7 @@
     return Math.floor(max - Math.random()*(max-min))
   }
   
+  // http://stackoverflow.com/a/23095731/1627873
   function randomRGB(){
     var num = Math.round(0xffffff * Math.random());
     var r = num >> 16;
