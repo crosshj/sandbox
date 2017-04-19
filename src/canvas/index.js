@@ -130,7 +130,7 @@
     }
   `;
   
-  function createCanvas({width=640, height=480}) {
+  function createCanvas({width=640, height=480}={}) {
     var div = document.createElement('div');
     div.id = 'canvas-container';
     var canvas = document.createElement('canvas');
