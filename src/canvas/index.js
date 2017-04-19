@@ -111,7 +111,41 @@
     });
   }
   
+  const defaultCSS = `
+    body {
+      background-color: #ddd;
+    }
+
+    #canvas-container{
+      display: flex;
+    }
+
+    #canvas-container canvas{
+      margin: auto;
+      border: 1px solid #aaa;
+      box-shadow: 2px 6px 12px 0px #d4d4d4;
+      background-color: #fefefe;
+      margin-top: 5%;
+      image-rendering: pixelated;
+    }
+  `;
+  
+  function createCanvas({width=640, height=480}) {
+    var div = document.createElement('div');
+    div.id = 'canvas-container';
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.id = 'myCanvas';
+    canvas.textContent = 'Your browser does not support the HTML5 canvas tag.';
+    div.appendChild(canvas)
+    document.body.appendChild(div);
+  }
+  
   function ready(){
+    addcss(defaultCSS);
+    createCanvas();
+    
     var canvas = document.getElementById('myCanvas');
     var ctx = canvas.getContext('2d');
     // boo, bad global
