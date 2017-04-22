@@ -1,4 +1,8 @@
 (()=> {
+  const XMAX = 160;
+  const YMAX = 120;
+
+
   var newWorker = function (funcObj) {
     // TODO: also should work with multiple functions and external file
 
@@ -14,12 +18,12 @@
 
     return worker;
   }
-  
+
   //http://www.hyperlounge.net/blog/up-the-workers-2/
   //https://www.html5rocks.com/en/tutorials/workers/basics/
   //https://developers.google.com/web/updates/2011/12/Transferable-Objects-Lightning-Fast
   //http://www.hyperlounge.net/blog/up-the-workers-2/
-  
+
 // TODO: use this to do the heavy lifting
 //   var w = newWorker(function () {
 //     var i = 0;
@@ -36,7 +40,7 @@
 //   w.onmessage = function (event) {
 //       document.getElementById("result").innerHTML = event.data;
 //   }
-  
+
   // dynamically append css
   function addcss(css){
     var head = document.getElementsByTagName('head')[0];
@@ -49,11 +53,11 @@
     }
     head.appendChild(s);
   }
-  
+
   // TODO: fully create canvas in DOM given root element and dimensions
   // ...
-  
-  
+
+
   // set one pixel at a time
   var id, d;
   function setCanvasPixel(context, {r=0, g=0, b=0, a=255}, {x=0, y=0}){
@@ -63,19 +67,19 @@
     d[1]   = g;
     d[2]   = b;
     d[3]   = a;
-    context.putImageData( id, x, y );  
+    context.putImageData( id, x, y );
   }
-  
+
   // used for setting entire page at a time
   function newImageData(context, {x=1,y=1}){
     return context.createImageData(x, y);
   }
-  
+
   // used for setting entire page at a time
   var ad;
   function setImageDataPixel(imageData, {r=0, g=0, b=0, a=255}, {x=0, y=0, xmax=1}){
     ad = ad || imageData.data;
-    
+
     const rowOffset = y * 4 * xmax;
     const colOffset = x * 4;
     const offset = rowOffset + colOffset;
@@ -84,15 +88,15 @@
     ad[offset + 2]   = b;
     ad[offset + 3]   = a;
   }
-  
+
   function range(from, to){
     return new Array(to).fill();
   }
-  
+
   function randomInt(min, max) {
     return Math.floor(max - Math.random()*(max-min))
   }
-  
+
   // http://stackoverflow.com/a/23095731/1627873
   function randomRGB(){
     var num = Math.round(0xffffff * Math.random());
@@ -101,61 +105,151 @@
     var b = num & 255;
     return { r, g, b };
   }
-  
+
   function randomPixel(setter){
-    range(0, 640).forEach((unused_x, x) => {
-      range(0, 480).forEach((unused_y, y) => {
-        setter(randomRGB(), {x, y, xmax: 640});
+    range(0, XMAX).forEach((unused_x, x) => {
+      range(0, YMAX).forEach((unused_y, y) => {
+        setter(randomRGB(), {x, y, xmax: XMAX});
       });
     });
   }
-  
+
   const defaultCSS = `
     body {
-      background-color: #ddd;
+      background-color: #333;
     }
 
     #canvas-container{
       display: flex;
+      flex-direction: column;
     }
 
     #canvas-container canvas{
+      zoom: 5;
       margin: auto;
-      border: 1px solid #aaa;
-      box-shadow: 2px 6px 12px 0px #d4d4d4;
+      border: 0.5px solid #8a8a8a;
+      /* box-shadow: 1px -4px 12px 0px #d4d4d4; */
       background-color: #fefefe;
       margin-top: 5%;
       image-rendering: pixelated;
+      border-radius: 0.5px;
     }
+
+    #button-container {
+      align-self: flex-end;
+      margin: auto;
+      margin-top: 4em;
+    }
+
+    button {
+      background-color: #b7b7b7;
+      border: 1px solid #868686;
+      padding: 0.75em;
+      text-transform: uppercase;
+      margin: 0px 10px;
+    }
+
   `;
-  
-  function createCanvas({width=640, height=480}={}) {
-    var div = document.createElement('div');
-    div.id = 'canvas-container';
+
+  var randomImageData;
+  function randomPixels(){
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+
+    randomImageData = randomImageData
+      ? randomImageData
+      : newImageData(ctx, {x:XMAX, y:YMAX});
+    randomPixel((color, pos) => setImageDataPixel(randomImageData, color, pos));
+    requestAnimationFrame(
+      () => ctx.putImageData( randomImageData, 0, 0 )
+    );
+  }
+
+  function makeCanvas({width=XMAX, height=YMAX}={}){
     var canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
     canvas.id = 'myCanvas';
     canvas.textContent = 'Your browser does not support the HTML5 canvas tag.';
-    div.appendChild(canvas)
+    return canvas;
+  }
+
+  function makeButtons({buttons = [] } = {}){
+    var buttonDiv = document.createElement('div');
+    buttonDiv.id = 'button-container';
+
+    buttons.forEach(button => {
+      var el = document.createElement('button');
+      el.textContent = button.text;
+      el.onclick = button.onClick;
+      buttonDiv.appendChild(el);
+    });
+
+    return buttonDiv;
+  }
+
+  function createCanvas() {
+    var div = document.createElement('div');
+    div.id = 'canvas-container';
+
+    var canvas = makeCanvas();
+    div.appendChild(canvas);
+
+    var buttonDiv = makeButtons({
+      buttons: [
+        {text: 'random', onClick: randomPixels}
+      ]
+    });
+    div.appendChild(buttonDiv);
+
     document.body.appendChild(div);
   }
-  
+
   function ready(){
     addcss(defaultCSS);
     createCanvas();
-    
+    randomPixels();
+
+    // boo, bad global
     var canvas = document.getElementById('myCanvas');
     var ctx = canvas.getContext('2d');
-    // boo, bad global
+
     window.setPixel = (color, pos) => setCanvasPixel(ctx, color, pos);
-    window.range = range;
-    
-    var imageData = newImageData(ctx, {x:640, y:480});
-    randomPixel((color, pos) => setImageDataPixel(imageData, color, pos));
-    requestAnimationFrame(
-      () => ctx.putImageData( imageData, 0, 0 )
-    );
   }
   document.addEventListener('DOMContentLoaded', ready, false);
 })();
+
+
+/*
+
+// modularize
+
+var foo = new Canvas({
+  id: "myCanvas",
+  parent: 'body', //selector or element
+  dimensions: {
+    x: 320,
+    y: 240
+  },
+  css: '', //if none will use default, or will add to default?
+  init: (setter) => {console.log(do something to init canvas); },
+  buttons: [
+    {text: 'random', onClick: (setter) => { console.log('do something with setter'); }},
+    {}
+  ],
+  workers: [{
+    function: () => { postMessage('this will happen in worker'); },
+    onMessage: (event) => { console.log('worker posted message: ', event.data); } // should know how to set pixels
+  },{
+    files: ['worker.js'],
+    onMessage: (event) => { console.log('worker posted message: ', event.data); } // should know how to set pixels
+  }]
+});
+
+foo.start()
+foo.stop()
+
+
+
+
+*/
