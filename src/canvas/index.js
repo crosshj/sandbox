@@ -1,7 +1,7 @@
 (()=> {
-  // http://stackoverflow.com/a/20693860/1627873
   var newWorker = function (funcObj) {
-    // Build a worker from an anonymous function body
+    // TODO: also should work with multiple functions and external file
+
     var blobURL = URL.createObjectURL(new Blob(['(',
         funcObj.toString(),
       ')()'], {
@@ -10,7 +10,6 @@
 
     worker = new Worker(blobURL);
 
-    // Won't be needing this anymore
     URL.revokeObjectURL(blobURL);
 
     return worker;
