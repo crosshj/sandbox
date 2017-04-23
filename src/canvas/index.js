@@ -160,7 +160,7 @@
   @media (min-width:1281px) { /* hi-res laptops and desktops */ }
 
     body {
-      background-color: #333;
+      background-color: #000;
       font-family: verdana;
     }
 
@@ -188,7 +188,7 @@
     #canvas-container canvas {
       zoom: 5;
       margin: auto;
-      border: 0.5px solid #8a8a8a;
+      border: 0px solid #8a8a8a;
       /* box-shadow: 1px -4px 12px 0px #d4d4d4; */
       background-color: #fefefe;
       margin-top: 5%;
@@ -239,7 +239,7 @@
       color: #333333;
       font-size: 20px;
       background: rgba(255, 255, 255, 0.1);
-      padding: 7.5px 15px 11px 15px;
+      padding: 9.5px 15px 11px 15px;
       text-decoration: none;
       border: 1px solid transparent;
       width: 42px;
@@ -304,6 +304,7 @@
     canvas.height = height;
     canvas.id = 'myCanvas';
     canvas.textContent = 'Your browser does not support the HTML5 canvas tag.';
+    canvas.style.filter = 'url(#myFilter)';
     return canvas;
   }
 
