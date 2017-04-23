@@ -106,6 +106,42 @@
     return { r, g, b };
   }
 
+  // https://remysharp.com/2010/07/21/throttling-function-calls
+  function debounce(fn, delay) {
+    var timer = null;
+    return function () {
+      var context = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        fn.apply(context, args);
+      }, delay);
+    };
+  }
+
+  // https://remysharp.com/2010/07/21/throttling-function-calls
+  function throttle(fn, threshhold, scope) {
+    threshhold || (threshhold = 250);
+    var last,
+        deferTimer;
+    return function () {
+      var context = scope || this;
+
+      var now = +new Date,
+          args = arguments;
+      if (last && now < last + threshhold) {
+        // hold on to it
+        clearTimeout(deferTimer);
+        deferTimer = setTimeout(function () {
+          last = now;
+          fn.apply(context, args);
+        }, threshhold);
+      } else {
+        last = now;
+        fn.apply(context, args);
+      }
+    };
+  }
+
   function randomPixel(setter){
     range(0, XMAX).forEach((unused_x, x) => {
       range(0, YMAX).forEach((unused_y, y) => {
@@ -115,16 +151,41 @@
   }
 
   const defaultCSS = `
+
+  @media (min-width:320px) { /* smartphones, portrait iPhone, portrait 480x320 phones (Android) */ }
+  @media (min-width:480px) { /* smartphones, Android phones, landscape iPhone */ }
+  @media (min-width:600px) { /* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */ }
+  @media (min-width:801px) { /* tablet, landscape iPad, lo-res laptops ands desktops */ }
+  @media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */ }
+  @media (min-width:1281px) { /* hi-res laptops and desktops */ }
+
     body {
       background-color: #333;
+      font-family: verdana;
     }
 
-    #canvas-container{
+
+    #canvas-container {
       display: flex;
       flex-direction: column;
     }
 
-    #canvas-container canvas{
+    #rotateMessage {
+      display: none;
+      color: white;
+      width: 90%;
+      margin: auto;
+      text-align: center;
+      font-size: 5em;
+      color: #00BCD4;
+    }
+
+    @media screen and (orientation: portrait) and (min-height: 650px) {
+      #canvas-container { display: none; }
+      #rotateMessage { display: block; }
+    }
+
+    #canvas-container canvas {
       zoom: 5;
       margin: auto;
       border: 0.5px solid #8a8a8a;
@@ -135,6 +196,38 @@
       border-radius: 0.5px;
     }
 
+    @media screen and (max-width: 1400px) {
+      #canvas-container canvas{
+        zoom: 4;
+        margin-top: 2%;
+      }
+    }
+
+    @media screen and (max-width: 750px) {
+      #canvas-container canvas{
+        zoom: 3;
+      }
+    }
+
+    @media screen and (max-width: 750px)
+    and (orientation: landscape) and (max-height: 450px) {
+      #canvas-container canvas{
+        zoom: 2.5;
+      }
+    }
+
+    @media screen and (max-width: 500px) {
+      #canvas-container canvas{
+        zoom: 2;
+      }
+    }
+
+    @media screen and (max-width: 350px) {
+      #canvas-container canvas{
+        zoom: 1;
+      }
+    }
+
     #button-container {
       align-self: flex-end;
       margin: auto;
@@ -142,11 +235,51 @@
     }
 
     button {
-      background-color: #b7b7b7;
-      border: 1px solid #868686;
-      padding: 0.75em;
-      text-transform: uppercase;
-      margin: 0px 10px;
+      border-radius: 50px;
+      color: #333333;
+      font-size: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 7.5px 15px 11px 15px;
+      text-decoration: none;
+      border: 1px solid transparent;
+      width: 42px;
+      min-height: 42px;
+      color: transparent;
+      margin: 10px 10px;
+      transition: background-color 1s, color 0s;
+      overflow: hidden;
+    }
+
+    button:hover {
+      background-color: #7eccfc;
+      color: #111;
+      width: auto;
+      transition: color 0.5s;
+    }
+
+    :focus {
+      display: inline-block;
+      border: 1px solid red;
+      outline: none;
+      border-radius: 45px;
+    }
+
+    @media screen and (max-width: 1400px) {
+      #button-container {
+        margin-top: 2em;
+      }
+    }
+
+    @media screen and (max-width: 750px) {
+      #button-container {
+        margin-top: 1em;
+      }
+    }
+
+    @media screen and (max-width: 500px) {
+      #button-container {
+        margin-top: 1em;
+      }
     }
 
   `;
@@ -178,12 +311,33 @@
     var buttonDiv = document.createElement('div');
     buttonDiv.id = 'button-container';
 
-    buttons.forEach(button => {
+    var first, last;
+    buttons.forEach((button,index) => {
       var el = document.createElement('button');
       el.textContent = button.text;
       el.onclick = button.onClick;
+      el.tabindex = index;
+      if (index === 0){
+        first = el;
+      }
+      if (index === buttons.length - 1){
+        last = el;
+        el.onkeydown = function(e){
+          if( e.keyCode === 9 ) {
+              first.focus();
+              return false;
+          }
+        };
+      }
       buttonDiv.appendChild(el);
     });
+
+    buttonDiv.querySelectorAll('button')[0].onkeydown = function(e){
+      if( e.keyCode === 9 && e.shiftKey) {
+        last.focus();
+        return false;
+      }
+    };
 
     return buttonDiv;
   }
@@ -197,12 +351,18 @@
 
     var buttonDiv = makeButtons({
       buttons: [
-        {text: 'random', onClick: randomPixels}
+        {text: 'random', onClick: throttle(randomPixels)}
       ]
     });
     div.appendChild(buttonDiv);
 
     document.body.appendChild(div);
+    div.querySelectorAll('button')[0].focus();
+
+    var rotMess = document.createElement('div');
+    rotMess.id = 'rotateMessage';
+    rotMess.textContent = 'Rotate your device!';
+    document.body.appendChild(rotMess);
   }
 
   function ready(){
