@@ -180,7 +180,7 @@
       color: #00BCD4;
     }
 
-    @media screen and (orientation: portrait) and (min-height: 650px) {
+    @media screen and (orientation: portrait) and (min-height: 650px) and (max-height: 985px) {
       #canvas-container { display: none; }
       #rotateMessage { display: block; }
     }
