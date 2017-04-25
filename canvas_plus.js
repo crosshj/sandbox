@@ -169,9 +169,7 @@
     }
 `;
 
-  const defaultButtons = [
-    {text: 'random', onClick: throttle(randomPixels)}
-  ];
+  const defaultButtons = [];
 
   const _default = {
     css: defaultCSS,
