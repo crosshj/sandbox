@@ -191,7 +191,7 @@
 
   CanvasPlus.prototype.start = function start() {
     this.styleSheet = addcss(this.options.css || _default.css);
-    this.dimensions = this.options.dimensions || _default.dimensions,
+    this.dimensions = this.options.dimensions || _default.dimensions;
     if (!this.options.init){
       _default.buttons = [{
         text: 'random',
