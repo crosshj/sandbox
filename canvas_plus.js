@@ -230,7 +230,10 @@
     div.appendChild(buttonDiv);
 
     document.querySelector(parent).appendChild(div);
-    div.querySelectorAll('button')[0].focus();
+    var firstButton = div.querySelectorAll('button')[0];
+    if (firstButton){
+      firstButton.focus();
+    }
 
     var rotMess = document.createElement('div');
     rotMess.id = 'rotateMessage';
