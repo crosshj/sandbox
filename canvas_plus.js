@@ -255,6 +255,10 @@
     var buttonDiv = document.createElement('div');
     buttonDiv.id = 'button-container';
 
+    if(buttons.length === 0){
+     return buttonDiv;
+    }
+
     var first, last;
     buttons.forEach((button,index) => {
       var el = document.createElement('button');
