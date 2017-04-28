@@ -377,7 +377,7 @@
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
         var _color = randomRGB();
-        _color.g = _color.b = 0;
+        _color.r = _color.b = 0;
         setter(_color, {x, y, xmax});
       });
     });
