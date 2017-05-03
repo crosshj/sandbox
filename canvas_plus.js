@@ -309,18 +309,6 @@
   }
 
   // https://remysharp.com/2010/07/21/throttling-function-calls
-  function debounce(fn, delay) {
-    var timer = null;
-    return function () {
-      var context = this, args = arguments;
-      clearTimeout(timer);
-      timer = setTimeout(function () {
-        fn.apply(context, args);
-      }, delay);
-    };
-  }
-
-  // https://remysharp.com/2010/07/21/throttling-function-calls
   function throttle(fn, threshhold, scope) {
     threshhold || (threshhold = 250);
     var last,
@@ -349,48 +337,16 @@
     if (!setter) return;
 
     var ctx = this.canvas.getContext('2d');
-
     randomImageData = randomImageData
       ? randomImageData
       : ctx.createImageData(this.dimensions.x, this.dimensions.y);
 
-    randomPixel(
-      (color, pos) => { setter(randomImageData, color, pos)},
-      this.dimensions.x,
-      this.dimensions.y
-    );
-
+    setter(randomImageData, {r:255}, {x:0, y:0, xmax:1});
     requestAnimationFrame(
       () => ctx.putImageData( randomImageData, 0, 0 )
     );
   }
 
-  function range(from, to){
-    return new Array(to).fill();
-  }
-
-  function randomInt(min, max) {
-    return Math.floor(max - Math.random()*(max-min))
-  }
-
-  // http://stackoverflow.com/a/23095731/1627873
-  function randomRGB(){
-    var num = Math.round(0xffffff * Math.random());
-    var r = num >> 16;
-    var g = num >> 8 & 255;
-    var b = num & 255;
-    return { r, g, b };
-  }
-
-  function randomPixel(setter, xmax, ymax){
-    range(0, xmax).forEach((unused_x, x) => {
-      range(0, ymax).forEach((unused_y, y) => {
-        var _color = randomRGB();
-        _color.r = _color.b = 0;
-        setter(_color, {x, y, xmax});
-      });
-    });
-  }
 
   // used for setting entire page at a time
   var ad;
