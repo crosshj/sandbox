@@ -198,11 +198,20 @@
         onClick: throttle(() => randomPixels.call(this, setImageDataPixel))
       }];  
     }
+    
+    var buttons;
+    if (!_default.buttons && this.options.buttons){
+      buttons = this.options.buttons.map(button => {
+        text: button.text,
+        onClick: throttle(() => button.onClick.call(this, setImageDataPixel))
+      })
+    }
+    
     this.canvas = createCanvas({
       id: this.options.id || _default.id,
       dimensions: this.dimensions,
       parent: this.options.parent || _default.parent,
-      buttons: this.options.buttons || _default.buttons
+      buttons: buttons || _default.buttons
     });
     (this.options.init || randomPixels).call(this, setImageDataPixel);
   };
