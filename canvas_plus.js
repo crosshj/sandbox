@@ -201,10 +201,10 @@
     
     var buttons;
     if (!_default.buttons && this.options.buttons){
-      buttons = this.options.buttons.map(button => {
+      buttons = this.options.buttons.map(button => ({
         text: button.text,
         onClick: throttle(() => button.onClick.call(this, setImageDataPixel))
-      })
+      }))
     }
     
     this.canvas = createCanvas({
