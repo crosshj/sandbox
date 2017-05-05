@@ -44,13 +44,25 @@
     );
 
     requestAnimationFrame(
-      () => ctx.putImageData( randomImageData, 0, 0 )
+      () => {
+        //this.canvas.style.filter = 'url(#myFilter)';
+        ctx.putImageData( randomImageData, 0, 0 );
+      }
     );
   }
 
+  function filter(setter){
+    this.canvas.style.filter = this.canvas.style.filter
+      ? ''
+      : 'url(#myFilter)';
+  }
+
   var buttons = [{
-    text: 'random!',
+    text: 'random',
     onClick: init
+  }, {
+    text: 'filter',
+    onClick: filter
   }];
 
 
