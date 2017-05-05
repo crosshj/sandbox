@@ -265,7 +265,7 @@
     canvas.height = dimensions.y;
     canvas.id = id;
     canvas.textContent = 'Your browser does not support the HTML5 canvas tag.';
-    canvas.style.filter = 'url(#myFilter)';
+    //canvas.style.filter = 'url(#myFilter)';
     return canvas;
   }
 
