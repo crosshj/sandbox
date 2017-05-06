@@ -349,10 +349,8 @@
 
 
   // used for setting entire page at a time
-  var ad;
   function setImageDataPixel(imageData, {r=0, g=0, b=0, a=255}, {x=0, y=0, xmax=1}){
-    ad = ad || imageData.data;
-
+    const ad = imageData.data;
     const rowOffset = y * 4 * xmax;
     const colOffset = x * 4;
     const offset = rowOffset + colOffset;
