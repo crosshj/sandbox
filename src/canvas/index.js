@@ -3,16 +3,7 @@
   const {Architect, Trainer} = synaptic;
 
   var results = [];
-  const network = new Architect.Perceptron(16,127,1);
-  const trainingOptions = {
-    rate: .1,
-    iterations: 10000,
-    error: .001,
-    shuffle: true,
-    log: 1
-  };
-  const trainer = new Trainer(network);
-  
+
   const clone = item => {
     return JSON.parse(JSON.stringify(item));
   };
@@ -24,6 +15,12 @@
 
     return padLeft((number).toString(2), len).split('').map(val=>parseInt(val));
   };
+
+  const intToOneBitInArray = (number, parentSize) => {
+    var array = new Array(parentSize).fill(0);
+    array[number] = 1;
+    return array;
+  }
 
   function range(from, to){
     return new Array(to).fill();
@@ -49,13 +46,13 @@
     return results;
   }
 
-  function imageFromNet(imageData, setter, xmax, ymax){
+  function imageFromNet(imageData, setter, xmax, ymax, nt){
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
         const offset = xmax*y*4 + x*4;
         var _color = {
           r: 0,
-          g: Math.round(network.activate(
+          g: Math.round(nt.activate(
               intToBitArray(x,8).concat(intToBitArray(y,8))
             )[0]) * 255,
           b: 0,
@@ -67,29 +64,63 @@
     return imageData;
   }
 
-  var neuralImageData;
   function neuralize(setter){
     //init.bind(this)(setter);
     const ctx = this.canvas.getContext('2d');
+    gridProcess(ctx, setter, this.dimensions.x, this.dimensions.y);
+  }
 
-    const neuralImageData = ctx.getImageData(0, 0, this.dimensions.x, this.dimensions.y);
+  function gridProcess(ctx, setter, xmax, ymax){
+  // var input = 16;
+  // var pool = 100;
+  // var output = 1;
+  // var connections = 200;
+  // var gates = 50;
 
-    const trainingSet = trainingSetFromImageData(neuralImageData.data, this.dimensions.x, 2);
+  // const network = new Architect.Liquid(input, pool, output, connections, gates);
 
-    trainer.trainAsync(trainingSet, trainingOptions)
-      .then(results => {
-        console.log('done training!');
-        imageFromNet(neuralImageData, setter, this.dimensions.x, this.dimensions.y);
-        requestAnimationFrame(() => {
-          ctx.putImageData( neuralImageData, 0, 0 );
-        });
+    var tasksArray = [];
+    const tOptions = {
+      rate: .1,
+      iterations: 1000,
+      error: .1,
+      shuffle: true,
+      log: 0
+    };
+
+    range(0, xmax/10).forEach((unused_x, x) => {
+      range(0, ymax/10).forEach((unused_y, y) => {
+        tasksArray.push((callback) => {
+          const id = ctx.getImageData(x*10, y*10, 10, 10);
+          const set = trainingSetFromImageData(id.data, 10, 10);
+          const net = new Architect.Perceptron(16,2,1);
+          new Trainer(net).trainAsync(set, tOptions)
+            .then(() => {
+              imageFromNet(id, setter, 10, 10, net);
+              requestAnimationFrame(() => {
+                ctx.putImageData( id, x*10, y*10);
+                callback();
+              });
+            });
+          });
       });
+    });
+
+    var task = 0;
+    var taskCallback = ()=>{
+      task+=1;
+      if(task >= tasksArray.length){ return; }
+      tasksArray[task](taskCallback);
+    };
+    tasksArray[task](taskCallback);
   }
 
 
   var randomImageData;
   function init(setter){
     if (!setter) return;
+
+    var ctx = this.canvas.getContext('2d');
 
     // http://stackoverflow.com/a/23095731/1627873
     function randomRGB(){
@@ -113,8 +144,6 @@
         });
       });
     }
-
-    var ctx = this.canvas.getContext('2d');
 
     randomImageData = randomImageData
       ? randomImageData
