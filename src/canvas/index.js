@@ -26,17 +26,74 @@
     return new Array(to).fill();
   }
 
+  function getYBeforeBalance(id, x, y, width){ 
+    if (y===0){
+      return 0.5;
+    }
+    const before = [];
+    range(1, y).forEach((unused, offsetBefore) => {
+      const offset = width*(y-offsetBefore-1)*4 + x*4;
+      before.push(id.data[offset+1/*green*/]/255);
+    });
+    const balance = before.reduce((x,y)=>x+y,0)/before.length;
+    return balance;
+  }
+
+  function getXBeforeBalance(id, x, y, width){ 
+    if (x===0){
+      return 0.5;
+    }
+    const before = [];
+    range(1, x).forEach((unused, offsetBefore) => {
+      const offset = width*y*4 + (x-offsetBefore-1)*4;
+      before.push(id.data[offset+1/*green*/]/255);
+    });
+    const balance = before.reduce((x,y)=>x+y,0)/before.length;
+    return balance;
+  }
+
+  function getLeftUpDiagBalance(id, x, y, width){
+    if (x===0 || y===0){
+      return 0.5;
+    }
+    const before = [];
+    const max = x > y ? x : y;
+    range(1, max).forEach((unused, offsetBefore) => {
+      if(y-offsetBefore-1 < 0) return;
+      if(x-offsetBefore-1 < 0) return;
+      const offset = width*(y-offsetBefore-1)*4 + (x-offsetBefore-1)*4;
+      before.push(id.data[offset+1/*green*/]/255);
+    });
+    const balance = before.reduce((x,y)=>x+y,0)/before.length;
+    return balance;
+  }
+
+  function getRightUpDiagBalance(id, x, y, width){ return 0; }
+
+  function getInputs(id, x, y, xmax, ymax){
+    //position metrics
+    const xyInputs = intToBitArray(y,8).concat(intToBitArray(x,8));
+    //other metrics
+    const yBefore = getYBeforeBalance(id, x, y, xmax);
+    const xBefore = getXBeforeBalance(id, x, y, xmax);
+    const leftUp = getLeftUpDiagBalance(id, x, y, xmax);
+    const rightUp = getRightUpDiagBalance(id, x, y, xmax);
+    
+    const inputs = xyInputs.concat([yBefore, xBefore, leftUp, rightUp]);
+
+    return inputs;
+  }
+
   function trainingSetFromImageData(id, xmax, ymax){
     var results = [];
 
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
-        
         const offset = xmax*y*4 + x*4;
         results.push({
-          input: intToBitArray(x,8).concat(intToBitArray(y,8)),
+          input: getInputs(id, x, y, xmax, ymax),
           output: [
-            id[offset + 1]/255
+            id.data[offset + 1]/255
           ]
         });
 
@@ -46,22 +103,24 @@
     return results;
   }
 
-  function imageFromNet(imageData, setter, xmax, ymax, nt){
+  function imageFromNet(id, setter, xmax, ymax, nt){
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
         const offset = xmax*y*4 + x*4;
         var _color = {
           r: 0,
-          g: Math.round(nt.activate(
-              intToBitArray(x,8).concat(intToBitArray(y,8))
-            )[0]) * 255,
+          g: Math.round(
+              nt.activate(
+                getInputs(id, x, y, xmax, ymax)
+              )[0]
+            ) * 255,
           b: 0,
           a: 255
         };
-        setter(imageData, _color, {x, y, xmax});
+        setter(id, _color, {x, y, xmax});
       });
     });
-    return imageData;
+    return id;
   }
 
   function neuralize(setter){
@@ -81,19 +140,21 @@
 
     var tasksArray = [];
     const tOptions = {
-      rate: .01,
-      iterations: 3350,
-      error: .05,
+      rate: .1,
+      iterations: 350,
+      error: .09,
       shuffle: false,
       log: 0
     };
+    const netOptions = [20, 20, 1];
 
     range(0, xmax/10).forEach((unused_x, x) => {
       range(0, ymax/10).forEach((unused_y, y) => {
         tasksArray.push((callback) => {
           const id = ctx.getImageData(x*10, y*10, 10, 10);
-          const set = trainingSetFromImageData(id.data, 10, 10);
-            // make it light while thinking
+          const set = trainingSetFromImageData(id, 10, 10);
+
+          // make it light while thinking
           id.data.forEach((x,i) => {
             if(i%4==0 && id.data[i+1] < 255){
               return;
@@ -107,11 +168,11 @@
             }
             id.data[i] = x<255 ? 255 : x;
           });
-          //debugger;
+
           requestAnimationFrame(() => {
             ctx.putImageData( id, x*10, y*10);
           });
-          const net = new Architect.Perceptron(16,32,1);
+          const net = new Architect.Perceptron(...netOptions);
 
 
           new Trainer(net).trainAsync(set, tOptions)
