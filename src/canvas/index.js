@@ -81,10 +81,10 @@
 
     var tasksArray = [];
     const tOptions = {
-      rate: .1,
-      iterations: 1000,
-      error: .1,
-      shuffle: true,
+      rate: .01,
+      iterations: 3350,
+      error: .05,
+      shuffle: false,
       log: 0
     };
 
@@ -93,12 +93,35 @@
         tasksArray.push((callback) => {
           const id = ctx.getImageData(x*10, y*10, 10, 10);
           const set = trainingSetFromImageData(id.data, 10, 10);
-          const net = new Architect.Perceptron(16,2,1);
+            // make it light while thinking
+          id.data.forEach((x,i) => {
+            if(i%4==0 && id.data[i+1] < 255){
+              return;
+            }
+            if(i%4-2==0 && id.data[i-1] < 255){
+              return;
+            }
+            if(i%4-1==0 && id.data[i] < 255){
+              id.data[i] = x+30;
+              return;
+            }
+            id.data[i] = x<255 ? 255 : x;
+          });
+          //debugger;
+          requestAnimationFrame(() => {
+            ctx.putImageData( id, x*10, y*10);
+          });
+          const net = new Architect.Perceptron(16,32,1);
+
+
           new Trainer(net).trainAsync(set, tOptions)
-            .then(() => {
+            .then(results => {
+              //console.log(results);
               imageFromNet(id, setter, 10, 10, net);
               requestAnimationFrame(() => {
-                ctx.putImageData( id, x*10, y*10);
+                if(results.error < 0.15){
+                  ctx.putImageData( id, x*10, y*10);
+                }
                 callback();
               });
             });
