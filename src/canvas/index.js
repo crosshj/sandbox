@@ -68,7 +68,21 @@
     return balance;
   }
 
-  function getRightUpDiagBalance(id, x, y, width){ return 0; }
+  function getRightUpDiagBalance(id, x, y, width){
+    if (y===0 || x===(width-1)){
+      return 0.5;
+    }
+    const before = [];
+    const max = (width-1) > y ? (width-1) : y;
+    range(1, max).forEach((unused, offsetBefore) => {
+      if(y-offsetBefore-1 < 0) return;
+      if(x+offsetBefore >= width) return;
+      const offset = width*(y-offsetBefore-1)*4 + (x+offsetBefore)*4;
+      before.push(id.data[offset+1/*green*/]/255);
+    });
+    const balance = before.reduce((x,y)=>x+y,0)/before.length;
+    return balance;
+  }
 
   function getInputs(id, x, y, xmax, ymax){
     //position metrics
@@ -107,13 +121,12 @@
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
         const offset = xmax*y*4 + x*4;
+        const greenOutput = nt.activate(
+          getInputs(id, x, y, xmax, ymax)
+        )[0];
         var _color = {
           r: 0,
-          g: Math.round(
-              nt.activate(
-                getInputs(id, x, y, xmax, ymax)
-              )[0]
-            ) * 255,
+          g: (greenOutput>0.5 ? greenOutput : greenOutput) * 255,
           b: 0,
           a: 255
         };
@@ -130,23 +143,24 @@
   }
 
   function gridProcess(ctx, setter, xmax, ymax){
-  // var input = 16;
-  // var pool = 100;
-  // var output = 1;
-  // var connections = 200;
-  // var gates = 50;
+    var input = 20;
+    var pool = 20;
+    var output = 1;
+    var connections = 30;
+    var gates = 10;
 
-  // const network = new Architect.Liquid(input, pool, output, connections, gates);
+    const liqNetOptions = [input, pool, output, connections, gates];
 
     var tasksArray = [];
     const tOptions = {
       rate: .1,
-      iterations: 350,
-      error: .09,
-      shuffle: false,
+      iterations: 13500,
+      error: .0001,
+      shuffle: true,
       log: 0
     };
-    const netOptions = [20, 20, 1];
+    const allowError = 0.001;
+    const netOptions = [20, 32, 1];
 
     range(0, xmax/10).forEach((unused_x, x) => {
       range(0, ymax/10).forEach((unused_y, y) => {
@@ -173,14 +187,14 @@
             ctx.putImageData( id, x*10, y*10);
           });
           const net = new Architect.Perceptron(...netOptions);
-
+          //const net = new Architect.Liquid(...liqNetOptions);
 
           new Trainer(net).trainAsync(set, tOptions)
             .then(results => {
               //console.log(results);
               imageFromNet(id, setter, 10, 10, net);
               requestAnimationFrame(() => {
-                if(results.error < 0.15){
+                if(results.error < allowError){
                   ctx.putImageData( id, x*10, y*10);
                 }
                 callback();
@@ -248,10 +262,40 @@
       : 'url(#myFilter)';
   }
 
+  function lenna(setter){
+    if (!setter) return;
+    var ctx = this.canvas.getContext('2d');
+    var imageObj = new Image();
+    imageObj.setAttribute('crossOrigin', 'Anonymous');
+
+    imageObj.onload = function() {
+      ctx.drawImage(imageObj, 0, 0);
+    };
+    imageObj.src = 'https://crosshj.com/sandbox/src/canvas/Lenna.png';
+  }
+
+  function vader(setter){
+    if (!setter) return;
+    var ctx = this.canvas.getContext('2d');
+    var imageObj = new Image();
+    imageObj.setAttribute('crossOrigin', 'Anonymous');
+
+    imageObj.onload = function() {
+      ctx.drawImage(imageObj, 0, 0);
+    };
+    imageObj.src = 'https://crosshj.com/sandbox/src/canvas/vader.png';
+  }
+
   var buttons = [{
     text: 'random',
     onClick: init
-  }, {
+  },{
+    text: 'lenna',
+    onClick: lenna
+  },{
+    text: 'vader',
+    onClick: vader
+  },{
     text: 'filter',
     onClick: filter
   }, {
@@ -261,7 +305,7 @@
 
 
   var options = {
-    init,
+    init: vader,
     buttons
   };
 
