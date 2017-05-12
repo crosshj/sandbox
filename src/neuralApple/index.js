@@ -87,7 +87,7 @@ http://cs.stanford.edu/people/karpathy/convnetjs/
     return id;
   }
 
-  function neuralize(ctx, setter, xmax, ymax){
+  function neuralize(setter){
     const ctx = this.ctx;
     const xmax = this.dimensions.x;
     const ymax = this.dimensions.y;
