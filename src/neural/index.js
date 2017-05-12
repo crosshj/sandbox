@@ -98,8 +98,28 @@
     return inputs;
   }
 
+  var _max = 255;
+  var _min = 0;
+  function spread(val, max, min){
+    _max = max;
+    _min = min;
+    return (val-min)*(255/(max-min));
+  }
+  function shrink(val){
+    return (val * ((_max-_min)/255))+_min;
+  }
+
   function trainingSetFromImageData(id, xmax, ymax){
     var results = [];
+    var max = 0;
+    var min = 255;
+    id.data.forEach((x,i)=>{
+      if(i%4-1===0){ //green
+        if(max < x){ max = x; }
+        if(min > x){ min = x; }
+      }
+    });
+
 
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
@@ -107,7 +127,7 @@
         results.push({
           input: getInputs(id, x, y, xmax, ymax),
           output: [
-            id.data[offset + 1]/255
+            spread(id.data[offset + 1],max,min)/255
           ]
         });
 
@@ -121,12 +141,13 @@
     range(0, xmax).forEach((unused_x, x) => {
       range(0, ymax).forEach((unused_y, y) => {
         const offset = xmax*y*4 + x*4;
-        const greenOutput = nt.activate(
+        var greenOutput = nt.activate(
           getInputs(id, x, y, xmax, ymax)
         )[0];
+        greenOutput = shrink(greenOutput * 255)
         var _color = {
           r: 0,
-          g: (greenOutput>0.5 ? greenOutput : greenOutput) * 255,
+          g: greenOutput,
           b: 0,
           a: 255
         };
@@ -155,17 +176,17 @@
 
     var tasksArray = [];
     const tOptions = {
-      rate: .4,
+      rate: .1,
       iterations: 13500,
-      error: .005,
+      error: .15,
       shuffle: true,
-      log: 1
+      log: 0
     };
     const allowError = 0.05;
     const netOptions = [20, 15, 1];
-    const net = new Architect.Perceptron(...netOptions);
-    //const net = new Architect.Liquid(...liqNetOptions);
-    const trainer = new Trainer(net);
+    // const net = new Architect.Perceptron(...netOptions);
+    // //const net = new Architect.Liquid(...liqNetOptions);
+    // const trainer = new Trainer(net);
 
     range(0, xmax/GRID_SIZE).forEach((unused_x, x) => {
       range(0, ymax/GRID_SIZE).forEach((unused_y, y) => {
@@ -173,13 +194,12 @@
           const id = ctx.getImageData(x*GRID_SIZE, y*GRID_SIZE, GRID_SIZE, GRID_SIZE);
           const set = trainingSetFromImageData(id, GRID_SIZE, GRID_SIZE);
 
-
-
           // requestAnimationFrame(() => {
           //   ctx.putImageData( id, x*GRID_SIZE, y*GRID_SIZE);
           // });
-          //const net = new Architect.Perceptron(...netOptions);
+          const net = new Architect.Perceptron(...netOptions);
           //const net = new Architect.Liquid(...liqNetOptions);
+          const trainer = new Trainer(net);
 
           tOptions.iterations = 1;
           function train(){
@@ -188,6 +208,7 @@
                 //console.log(results);
                 imageFromNet(id, setter, GRID_SIZE, GRID_SIZE, net);
                 // // make it light while thinking
+                
                 // id.data.forEach((x,i) => {
                 //   if(i%4==0 && id.data[i+1] < 255){
                 //     return;
@@ -203,13 +224,14 @@
                 // });
                 requestAnimationFrame(() => {
                   ctx.putImageData( id, x*GRID_SIZE, y*GRID_SIZE);
-                  tOptions.rate = 0.1; //results.error;
+                 //tOptions.rate = 0.1; //results.error;
                   if(results.error < tOptions.error){
                     callback();
                   } else {
                     train();
                   }
-                }); //req anim frame
+                 }); //req anim frame
+
               }); //then
             }; //train
             train();
