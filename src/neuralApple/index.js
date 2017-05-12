@@ -88,7 +88,7 @@ http://cs.stanford.edu/people/karpathy/convnetjs/
   }
 
   function neuralize(setter){
-    const ctx = this.ctx;
+    const ctx = this.canvas.getContext('2d');;
     const xmax = this.dimensions.x;
     const ymax = this.dimensions.y;
     const GRID_SIZE = 10;
@@ -201,7 +201,7 @@ http://cs.stanford.edu/people/karpathy/convnetjs/
 
 
   var options = {
-    init: vader,
+    init: random,
     buttons
   };
 
