@@ -12,8 +12,9 @@ fetch('https://api.github.com/repos/crosshj/sandbox/contents/src?ref=gh-pages')
     json.forEach(j => {
       const li = document.createElement('li');
       li.textContent = j.name;
-      [{site}, {source}].forEach(base => {
+      [{source}, {site}].forEach(base => {
         const a = document.createElement('a');
+        a.className = base.site ? 'demo' : 'source'
         a.href = (base.site || base.source) + root + (base.source ? 'tree/gh-pages/' : '') + j.path;
         a.textContent = base.site ? '[demo]' : '[source]';
         li.appendChild(a);

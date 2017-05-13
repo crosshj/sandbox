@@ -1,0 +1,37 @@
+body {
+  font-family: monospace;
+  font-size: large;
+}
+
+#projects {
+  width: 45%;
+  margin: 0px auto;
+}
+
+#projects ul {
+  list-style-type: none;
+  padding-left: 0px;
+}
+
+#projects li {
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+}
+
+#projects li:hover {
+  background-color: aquamarine;
+  cursor: pointer;
+}
+
+#projects li a {
+  float: right;
+  margin: 0px 5px;
+  text-decoration: none;
+}
+
+#projects li a:hover {
+  background-color: black;
+  color: white;
+  text-decoration: none;
+}
