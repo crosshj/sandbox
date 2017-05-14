@@ -21,7 +21,7 @@ body {
 
 #projects li:hover {
   background-color: aquamarine;
-  cursor: pointer;
+  cursor: default;
 }
 
 #projects li a {

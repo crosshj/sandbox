@@ -11,7 +11,7 @@
   const intToBitArray = (number, len) => {
     function padLeft(nr, n, str){
       return Array(n-String(nr).length+1).join(str||'0')+nr;
-    } 
+    }
 
     return padLeft((number).toString(2), len).split('').map(val=>parseInt(val));
   };
@@ -26,7 +26,7 @@
     return new Array(to).fill();
   }
 
-  function getYBeforeBalance(id, x, y, width){ 
+  function getYBeforeBalance(id, x, y, width){
     if (y===0){
       return 0.5;
     }
@@ -39,7 +39,7 @@
     return balance;
   }
 
-  function getXBeforeBalance(id, x, y, width){ 
+  function getXBeforeBalance(id, x, y, width){
     if (x===0){
       return 0.5;
     }
@@ -92,7 +92,7 @@
     const xBefore = getXBeforeBalance(id, x, y, xmax);
     const leftUp = getLeftUpDiagBalance(id, x, y, xmax);
     const rightUp = getRightUpDiagBalance(id, x, y, xmax);
-    
+
     const inputs = xyInputs.concat([yBefore, xBefore, leftUp, rightUp]);
 
     return inputs;
@@ -236,7 +236,7 @@
           _color.r = _color.b = 0;
           //_color.r = Math.round(Math.random()) * 255;
           //_color.b = Math.round(Math.random()) * 255;
-          
+
           _color.g = Math.round(Math.random()) * 255;
           setter(_color, {x, y, xmax});
         });
@@ -305,7 +305,7 @@
 
 
   var options = {
-    init: vader,
+    init,
     buttons
   };
 
