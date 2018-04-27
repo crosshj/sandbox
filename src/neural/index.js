@@ -342,7 +342,7 @@
 
 
   var options = {
-    init: lenna,
+    init: random,
     buttons
   };
 
