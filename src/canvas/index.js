@@ -189,7 +189,9 @@
           const net = new Architect.Perceptron(...netOptions);
           //const net = new Architect.Liquid(...liqNetOptions);
 
-          new Trainer(net).trainAsync(set, tOptions)
+          //new Trainer(net).trainAsync(set, tOptions)
+          var trainer = new Trainer(net);
+          Promise.resolve(trainer.train(set, tOptions))
             .then(results => {
               //console.log(results);
               imageFromNet(id, setter, 10, 10, net);
