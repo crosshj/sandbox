@@ -204,7 +204,7 @@
           tOptions.iterations = 1;
           function train(){
             //trainer.trainAsync(set, tOptions)
-            trainer.train(set, tOptions)
+            Promise.resolve(trainer.train(set, tOptions))
               .then(results => {
                 //console.log(results);
                 imageFromNet(id, setter, GRID_SIZE, GRID_SIZE, net);
