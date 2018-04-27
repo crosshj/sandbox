@@ -342,7 +342,7 @@
 
 
   var options = {
-    init: random,
+    init,
     buttons
   };
 
