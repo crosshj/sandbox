@@ -134,6 +134,7 @@
       margin: 10px 10px;
       transition: background-color 1s, color 0s;
       overflow: hidden;
+      min-width: 52px;
     }
 
     button:hover {
