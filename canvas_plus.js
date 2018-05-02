@@ -172,7 +172,7 @@
 
   const defaultButtons = [];
 
-  const _default = ({ dims }) => {
+  const _default = ({ dims }) => ({
     css: defaultCSS(dims),
     dimensions: {
       x: 160,
@@ -181,7 +181,7 @@
     buttons: defaultButtons,
     id: 'myCanvas',
     parent: 'body'
-  }
+  });
 
 
   var CanvasPlus = function(options={}) {
