@@ -172,8 +172,8 @@
 
   const defaultButtons = [];
 
-  const _default = ({ dimensions }) => {
-    css: defaultCSS(dimensions),
+  const _default = ({ dims }) => {
+    css: defaultCSS(dims),
     dimensions: {
       x: 160,
       y: 120
@@ -191,8 +191,8 @@
   };
 
   CanvasPlus.prototype.start = function start() {
-    const dimensions = this.options.dimensions;
-    this.styleSheet = addcss(this.options.css || _default.css({dimensions}));
+    const dims = this.options.dimensions;
+    this.styleSheet = addcss(this.options.css || _default.css({dims}));
     this.dimensions = this.options.dimensions || _default.dimensions;
     if (!this.options.init){
       _default.buttons = [{
