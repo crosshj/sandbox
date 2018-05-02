@@ -37,7 +37,7 @@
   //       document.getElementById("result").innerHTML = event.data;
   //   }
 
-  const defaultCSS = `
+  const defaultCSS = (dimensions = { zoom: 1}) => `
     @media (min-width:320px) { /* smartphones, portrait iPhone, portrait 480x320 phones (Android) */ }
     @media (min-width:480px) { /* smartphones, Android phones, landscape iPhone */ }
     @media (min-width:600px) { /* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */ }
@@ -72,7 +72,7 @@
     }
 
     #canvas-container canvas {
-      zoom: 5;
+      zoom: ${5*dimensions.zoom};
       margin: auto;
       border: 0px solid #8a8a8a;
       /* box-shadow: 1px -4px 12px 0px #d4d4d4; */
@@ -84,33 +84,33 @@
 
     @media screen and (max-width: 1400px) {
       #canvas-container canvas{
-        zoom: 4;
+        zoom: ${4*dimensions.zoom};
         margin-top: 2%;
       }
     }
 
     @media screen and (max-width: 750px) {
       #canvas-container canvas{
-        zoom: 3;
+        zoom: ${3*dimensions.zoom};
       }
     }
 
     @media screen and (max-width: 750px)
     and (orientation: landscape) and (max-height: 450px) {
       #canvas-container canvas{
-        zoom: 2.5;
+        zoom: ${2.5*dimensions.zoom};
       }
     }
 
     @media screen and (max-width: 500px) {
       #canvas-container canvas{
-        zoom: 2;
+        zoom: ${2*dimensions.zoom};
       }
     }
 
     @media screen and (max-width: 350px) {
       #canvas-container canvas{
-        zoom: 1;
+        zoom: ${1*dimensions.zoom};
       }
     }
 
@@ -172,8 +172,8 @@
 
   const defaultButtons = [];
 
-  const _default = {
-    css: defaultCSS,
+  const _default = ({ dimensions }) => {
+    css: defaultCSS(dimensions),
     dimensions: {
       x: 160,
       y: 120
@@ -191,7 +191,8 @@
   };
 
   CanvasPlus.prototype.start = function start() {
-    this.styleSheet = addcss(this.options.css || _default.css);
+    const dimensions = this.options.dimensions;
+    this.styleSheet = addcss(this.options.css || _default.css({dimensions}));
     this.dimensions = this.options.dimensions || _default.dimensions;
     if (!this.options.init){
       _default.buttons = [{
