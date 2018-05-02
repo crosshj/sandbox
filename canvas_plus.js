@@ -192,17 +192,18 @@
 
   CanvasPlus.prototype.start = function start() {
     const dims = this.options.dimensions;
-    this.styleSheet = addcss(this.options.css || _default.css({dims}));
-    this.dimensions = this.options.dimensions || _default.dimensions;
+    const def = _default({dims});
+    this.styleSheet = addcss(this.options.css || def.css);
+    this.dimensions = this.options.dimensions || def.dimensions;
     if (!this.options.init){
-      _default.buttons = [{
+      def.buttons = [{
         text: 'random',
         onClick: throttle(() => randomPixels.call(this, setImageDataPixel))
       }];  
     }
     
     var buttons;
-    if (_default.buttons.length === 0 && this.options.buttons){
+    if (def.buttons.length === 0 && this.options.buttons){
       buttons = this.options.buttons.map(button => ({
         text: button.text,
         onClick: throttle(() => button.onClick.call(this, setImageDataPixel))
@@ -210,10 +211,10 @@
     }
     
     this.canvas = createCanvas({
-      id: this.options.id || _default.id,
+      id: this.options.id || def.id,
       dimensions: this.dimensions,
-      parent: this.options.parent || _default.parent,
-      buttons: buttons || _default.buttons
+      parent: this.options.parent || def.parent,
+      buttons: buttons || def.buttons
     });
     (this.options.init || randomPixels).call(this, setImageDataPixel);
   };
