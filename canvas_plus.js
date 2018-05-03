@@ -80,6 +80,10 @@
       margin-top: 5%;
       image-rendering: pixelated;
       border-radius: 0.5px;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      right: 0px;
     }
 
     @media screen and (max-width: 1400px) {
@@ -115,9 +119,12 @@
     }
 
     #button-container {
-      align-self: flex-end;
       margin: auto;
-      margin-top: 4em;
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      bottom: 15px;
+      text-align: center;
     }
 
     button {
@@ -238,7 +245,7 @@
   }
 
   function createCanvas({id, dimensions, parent, buttons}) {
-    var div = document.createElement('div');
+    var div = document.getElementById('canvas-container') || document.createElement('div');
     div.id = 'canvas-container';
 
     var canvas = makeCanvas({id, dimensions, parent});
@@ -247,10 +254,16 @@
     var buttonDiv = makeButtons({ buttons });
     div.appendChild(buttonDiv);
 
-    document.querySelector(parent).appendChild(div);
+    if(!document.getElementById('canvas-container')){
+      document.querySelector(parent).appendChild(div);
+    }
     var firstButton = div.querySelectorAll('button')[0];
     if (firstButton){
       firstButton.focus();
+    }
+
+    if(document.getElementById('rotateMessage')){
+      return canvas;
     }
 
     var rotMess = document.createElement('div');
@@ -273,7 +286,7 @@
   }
 
   function makeButtons({buttons = [] } = {}){
-    var buttonDiv = document.createElement('div');
+    var buttonDiv = document.getElementById('button-container') || document.createElement('div');
     buttonDiv.id = 'button-container';
 
     if(buttons.length === 0){
